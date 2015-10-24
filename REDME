@@ -1,0 +1,35 @@
+Sie haben ein leeres Repository
+
+Anfangs müssen Sie diese Befehle an Ihrem Terminal ausführen.
+
+Neu bei Git? Grundsätzliche Git-Befehle
+Erstmalige Konfiguration von Git
+
+git config --global user.name "Jakob Warnow"
+git config --global user.email "jakob.warnow@gmx.de"
+
+Die Arbeit mit Ihrem Repository
+Ich möchte dieses Repository nur klonen
+
+Wenn Sie dieses leere Repository einfach klonen möchten, führen Sie diesen Befehl mit Ihrem Git-Client aus.
+
+git clone ssh://git@bitbucket.opentoken.de:2224/ao/ao.git
+
+Mein Code kann gepusht werden
+
+Wenn Sie bereits Code haben, der in dieses Repository gepusht werden kann, benutzen Sie hierfür bitte Ihren Git-Client.
+
+cd existing-project
+git init
+git add --all
+git commit -m "Initial Commit"
+git remote add origin ssh://git@bitbucket.opentoken.de:2224/ao/ao.git
+git push -u origin master
+
+Mein Code wird bereits von Git verwaltet
+
+Wenn Ihr Code bereits von Git verwaltet wird, legen Sie dieses Repository als Ihre "Quelle" für Pushes fest.
+
+cd existing-project
+git remote set-url origin ssh://git@bitbucket.opentoken.de:2224/ao/ao.git
+git push -u origin master
