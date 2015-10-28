@@ -12,19 +12,28 @@ public class Insertionsort {
 		ArrayList<Integer> n = new ArrayList<>();
 		int max = 100000;
 		int min = 1;
-
 		
-		for (int k = 0; k < 100; k++) {
-			for (int i = 0; i < 10000; i++) {
-				int randomNum = ThreadLocalRandom.current().nextInt(min, max + 1);
-				n.add(randomNum);
-			}
+		for (int i = 0; i < 300; i++) {
+			n.add(i*100000000);
 			int[] conv = convertIntegers(n);
 			long timeStart = System.nanoTime();
 			insertionSort(conv);
 			long timeStop = System.nanoTime();
-			System.out.println("Durchlauf: " + k + " Dauerte: " + (timeStop - timeStart) + " milisec.");
+			System.out.println(conv.length+";"+(timeStop - timeStart));
 		}
+
+		
+//		for (int k = 0; k < 300; k++) {
+//			for (int i = 0; i < 500; i++) {
+//				int randomNum = ThreadLocalRandom.current().nextInt(min, max + 1);
+//				n.add(randomNum);
+//			}
+//			int[] conv = convertIntegers(n);
+//			long timeStart = System.nanoTime();
+//			insertionSort(conv);
+//			long timeStop = System.nanoTime();
+//			System.out.println(conv.length+";"+(timeStop - timeStart));
+//		}
 
 	}
 	
