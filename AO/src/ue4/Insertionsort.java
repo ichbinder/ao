@@ -14,8 +14,8 @@ public class Insertionsort {
 		int min = 1;
 
 		
-		for (int k = 0; k < 200; k++) {
-			for (int i = 0; i < 20000; i++) {
+		for (int k = 0; k < 100; k++) {
+			for (int i = 0; i < 10000; i++) {
 				int randomNum = ThreadLocalRandom.current().nextInt(min, max + 1);
 				n.add(randomNum);
 			}
