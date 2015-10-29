@@ -31,7 +31,7 @@ public class Compare {
 			int max = 100000;
 			int min = 1;
 
-			OutputStream outputStream       = new FileOutputStream("resultMerge.csv");
+			OutputStream outputStream       = new FileOutputStream("sortComparision.csv");
 			Writer       outputStreamWriter = new OutputStreamWriter(outputStream);
 
 			outputStreamWriter.write("n;Merge Sort Time;Insertion Sort Time\n");
