@@ -1,19 +1,13 @@
 package ue5;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -58,12 +52,17 @@ public class HuffmanEncoding {
 		//Write LookUptable		
 		for (Map.Entry<Character, ArrayList<Boolean>> entry : lookupTable.entrySet())
 		{
-			ArrayList<Boolean> path = new ArrayList<Boolean>();
-			for(int i = 0; i < path.size(); i++){
+			ArrayList<Boolean> path = entry.getValue();
+			int prefix = 8 - path.size();
+			
+			for(int i = 0; i < prefix; i++){
+				bos.writeBit(0);
+			}
+			for(int i = prefix; i < path.size(); i++){
 
-				boolean bool = path.get(i); 
+				boolean bool = path.get(i);
 				int bit = (bool) ? 1 : 0;
-				bos.writeBit(bit);
+				bos.writeBit(bit);				
 			}
 			bos.write(entry.getKey());
 		}
