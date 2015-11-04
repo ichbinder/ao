@@ -32,14 +32,15 @@ public class Compare {
 	
 	private static void optimizedValues() throws IOException{
 		
-		OutputStream outputStream       = new FileOutputStream("sortComparisionOptim.csv");
+		OutputStream outputStream       = new FileOutputStream("sortComparisionOptim2.csv");
 		Writer       outputStreamWriter = new OutputStreamWriter(outputStream);
 		outputStreamWriter.write("n; MergeSort;InsertionSort;QuickSort\n");
-				
-		for(int i = 1; i < 301; i++){
+
+		
+		for(int i = 0; i < 100; i++){
 			
-			double insert = Math.pow(i, 2) * 1000;
-			double merge_quick = i * Math.log10(i) * 1000;
+			double insert = Math.pow(i, 2) * 100000;// * 1000;
+			double merge_quick = i * Math.log10(i) * 100000;// * 1000;
 			String sLine = i + ";" + insert + ";" + merge_quick + ";" + merge_quick + "\n";
 			while(sLine.contains(".")){
 				sLine = sLine.replace('.', ',');					
@@ -65,17 +66,17 @@ public class Compare {
 		int max = 100000;
 		int min = 1;
 
-		OutputStream outputStream       = new FileOutputStream("sortComparisionRandom2.csv");
+		OutputStream outputStream       = new FileOutputStream("sortComparisionSort2.csv");
 		Writer       outputStreamWriter = new OutputStreamWriter(outputStream);
 
 		outputStreamWriter.write("n;MergeSort;InsertionSort;QuickSort\n");
 		for (int i = 0; i < 1000; i++) {
 			
-			n.add(i*5000);
+			n.add(i*10000000);
 //			n.add(i*10000000);
 
 //			n.add(i);
-			int[] conv = convertIntegers(n, true);
+			int[] conv = convertIntegers(n, false);
 			
 			int[] input = new int [conv.length];
 			System.arraycopy(conv, 0, input, 0, input.length);
@@ -85,16 +86,22 @@ public class Compare {
 			
 			double middleTimeMerge = 0, middleTimeInsertion = 0, middleTimeQuick = 0;
 
+			long middle = 0, lg = 0; 
 			for(int j = 0; j < counter; j++){
 				
 				long timeStart = System.nanoTime();	
 				MergeSort.mergeSort(conv, 0, n.size() -1);
 				long timeStop = System.nanoTime();
 				timeSumMerge += timeStop - timeStart;
-			}
-			
-			middleTimeMerge = timeSumMerge / counter;					
 
+//				middle += (timeStop - timeStart);
+//				lg += conv.length;
+			}			
+			
+//			System.out.println(lg/counter + ";" + middle / counter);
+			
+//			middleTimeMerge = middle / counter;
+			middleTimeMerge = timeSumMerge / counter;					
 			
 			for(int j = 0; j < counter; j++){
 				
@@ -102,8 +109,13 @@ public class Compare {
 				Insertionsort.insertionSort(input);
 				long timeStop = System.nanoTime();
 				timeSumInsertion += timeStop - timeStart;
+
+//				middle += (timeStop - timeStart);
+//				lg += conv.length;
 			}
 			middleTimeInsertion = timeSumInsertion / counter;
+//			middleTimeInsertion = middle / counter;
+
 			
 			for(int j = 0; j < counter; j++){
 				
@@ -132,7 +144,7 @@ public class Compare {
 	
 	public static void main(String[] args) throws IOException {
 			
-			tests();
-//			optimizedValues();
+//			tests();
+			optimizedValues();
 		}
 }
