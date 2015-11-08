@@ -18,13 +18,16 @@ public class HuffmanEncoding {
 	
 	private Node huffmanTree; 
 	private List<Node> nodeList;
-	private Map<Character, ArrayList<Boolean>> lookupTable;
+	private Map<Character, ArrayList<Short>> lookupTable;
+	private BitOutputStream bitOutput;
+	private String outputContent = "";
 
 	public HuffmanEncoding(){
 		
 		frequencies = new HashMap<Character, Long>();
 		nodeList = new ArrayList<Node>();
-		lookupTable = new HashMap<Character, ArrayList<Boolean>>();
+		lookupTable = new HashMap<Character, ArrayList<Short>>();
+		
 	}
 	
 	public void EncodeFile(String inputPath, String outputPath) throws IOException{
@@ -37,62 +40,96 @@ public class HuffmanEncoding {
 		//Baue Huffmann-Tree
 		buildHuffmanTree();
 		//Baue Lookup-Tabelle
-		buildLookupTable();
-		exportCompression(inputPath, outputPath);
+		
+		OutputStream output = new FileOutputStream(outputPath);
+		bitOutput = new BitOutputStream(output);
+		
+		buildLookupTable();		
+		
+		System.out.println(outputContent);
+		
+		exportCompression(inputPath);
 	}
 	
-	private void exportCompression(String inputPath, String outputPath) throws IOException{		
+	private void exportCompression(String inputPath) throws IOException{		
 				
-		BufferedReader br = new BufferedReader(new FileReader(inputPath));
-		OutputStream output = new FileOutputStream(outputPath);
-		BitOutputStream bos = new BitOutputStream(output);
+		BufferedReader brInput = new BufferedReader(new FileReader(inputPath));
 
+		while(brInput.ready()){
+			
+			char c = (char) brInput.read();
+			ArrayList<Short> huffmanPath = lookupTable.get(c);
+			for(int i = 0; i < huffmanPath.size(); i++){
+				bitOutput.write(huffmanPath.get(i));
+			}
+		}
+		
 		char [] singleChar = new char[1];		
 
-		//Write LookUptable		
-		for (Map.Entry<Character, ArrayList<Boolean>> entry : lookupTable.entrySet())
-		{
-			ArrayList<Boolean> path = entry.getValue();
-			int prefix = 8 - path.size();
-			
-			for(int i = 0; i < prefix; i++){
-				bos.writeBit(0);
-			}
-			for(int i = prefix; i < path.size(); i++){
-
-				boolean bool = path.get(i);
-				int bit = (bool) ? 1 : 0;
-				bos.writeBit(bit);				
-			}
-			bos.write(entry.getKey());
-		}
-		bos.close();
-		/*
-		//Write ConvertedFile		
-		while(br.ready()){
-			br.read(singleChar);
-			ArrayList<Boolean> path = lookupTable.get(singleChar[0]);
-
-			for(int i = 0; i < path.size(); i++){
-			
-				boolean bool = path.get(i); 
-				int bit = (bool) ? 1 : 0;
-				bos.writeBit(bit);
-			}
-		}
-		*/
+						
+		
+		bitOutput.close();		
 	}
 		
 	private void buildLookupTable(){
 		findLowestLayer(huffmanTree);
+		try {
+			bitOutput.write("HT".getBytes());
+			outputContent += "HT";
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
+	private boolean isBitSet(byte b, int bit)
+	{
+		return (b & (1 << bit)) != 0;
+	}
+	
+	private static int getBit(byte[] data, int pos) {
+	      int posByte = pos/8; 
+	      int posBit = pos%8;
+	      byte valByte = data[posByte];
+	      int valInt = valByte>>(8-(posBit+1)) & 0x0001;
+	      return valInt;
+	   }
+	
 	private void findLowestLayer(Node n){
-		
-		if(n.getLeftNode() == null && n.getRightNode() == null) {			
-			lookupTable.put((char) n.getCharacters().charAt(0),(ArrayList<Boolean>) n.getPath());
+				
+		if(n.getLeftNode() == null && n.getRightNode() == null) {
+			
+			bitOutput.writeBit(1);
+			/*
+				try {
+					bitOutput.write((byte[]) n.getCharacters().getBytes());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}			
+			*/	
+//			bitOutput.writeBits(Integer.toBinaryString((int)n.getCharacters().charAt(0)));
+
+			
+			byte [] byt = new byte [1];
+			byt[0] = (byte) n.getCharacters().charAt(0);
+			
+//			byte bytes = (byte) n.getCharacters().charAt(0);
+			String bitString = "";
+			for(int i = 0; i < 8; i++){				
+				bitString += getBit(byt, i);
+			}			
+			
+			bitOutput.writeBits(bitString);
+			outputContent += "1";
+			outputContent += bitString;
+//			outputContent += "1" + n.getCharacters();			
+			lookupTable.put((char) n.getCharacters().charAt(0),(ArrayList<Short>) n.getPath());			
 		}
 		else{
+			bitOutput.writeBit(0);
+			outputContent += "0";
+			
 			findLowestLayer(n.getLeftNode());
 			findLowestLayer(n.getRightNode());
 		}
@@ -103,35 +140,34 @@ public class HuffmanEncoding {
 		charactersToNodes();		
 		huffmanTree = buildConnections();
 
-		labelPaths(huffmanTree.getLeftNode(), false);
-		labelPaths(huffmanTree.getRightNode(), true);		
+		labelPaths(huffmanTree.getLeftNode(), (short ) 0);
+		labelPaths(huffmanTree.getRightNode(), (short) 1);		
 	}
 
-	private void labelPaths(Node node, boolean binary){
+	private void labelPaths(Node node, short binary){
 
 		node.setPath(binary);
 		
 		if(node.getLeftNode() != null){
 			
-			labelPaths(node.getLeftNode(), node.getPath(), false );			
+			labelPaths(node.getLeftNode(), node.getPath(), (short) 0 );			
 		}
 		if(node.getRightNode() != null){			
-			labelPaths(node.getRightNode(), node.getPath(), true);			
+			labelPaths(node.getRightNode(), node.getPath(), (short) 1);			
 		}
-
 	}
 		
-	private void labelPaths(Node node, ArrayList<Boolean> parentPath, boolean binary){
+	private void labelPaths(Node node, ArrayList<Short> arrayList, short binary){
 		
-		node.setPath(parentPath);
+		node.setPath(arrayList);
 		node.setPath(binary);
 		
 		if(node.getLeftNode() != null){
 			
-			labelPaths(node.getLeftNode(), node.getPath(), false );			
+			labelPaths(node.getLeftNode(), node.getPath(), (short) 0 );			
 		}
 		if(node.getRightNode() != null){			
-			labelPaths(node.getRightNode(), node.getPath(), true);			
+			labelPaths(node.getRightNode(), node.getPath(), (short) 1);			
 		}
 	}
 		
@@ -141,10 +177,7 @@ public class HuffmanEncoding {
 
 			Node firstNode  = findSmallestNode();
 			Node secondNode = findSmallestNode();
-			
-//			firstNode.setPath(false);
-//			secondNode.setPath(true);
-			
+						
 			String parentCharacters = "";
 			long parentValue =  0;
 			parentCharacters += secondNode.getCharacters();
@@ -161,9 +194,7 @@ public class HuffmanEncoding {
 		}
 
 		Node nFirst = findSmallestNode();
-//		nFirst.setPath(false); 
 		Node nSecond = findSmallestNode();
-//		nSecond.setPath(true);		
 		
 		String parentCharacters = "";
 		long parentValue =  0;
@@ -239,9 +270,6 @@ public class HuffmanEncoding {
 			long lineCount = 0;
 			while(br.ready()){
 			
-//				char [] array = new char [1024];
-//				br.read(array, 0, 1024);
-//				countOccurences(array);	
 				String sLine = br.readLine();
 				countOccurences(sLine.toCharArray());
 				if(br.ready()){
@@ -261,5 +289,9 @@ public class HuffmanEncoding {
 		
 		HuffmanEncoding encode = new HuffmanEncoding();
 		encode.EncodeFile("src/ue5/META-INF/TestTextFile.txt", "src/ue5/META-INF/CompressedTextFile.txt");
+		
+		HuffmanDecoding decode = new HuffmanDecoding();
+		decode.decodeFile("src/ue5/META-INF/CompressedTextFile.txt");
+		
 	}
 }

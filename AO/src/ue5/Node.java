@@ -5,35 +5,44 @@ import java.util.ArrayList;
 public class Node {
 
 	private Node left, right;
-	private final long value;
-	private final String Characters;
+	private long value;
+	private String Characters;
 //	private short binaryPath;
-	private ArrayList<Boolean> binaryPath;
+	private ArrayList<Short> binaryPath;
+	
+	public Node(){
+		
+	}
 	
 	public Node(String s, long freq){
 
 		value = freq;		
 		Characters = s;
-		binaryPath = new ArrayList<Boolean>();
+		binaryPath = new ArrayList<Short>();
 	}
 	
-	public void setPath(ArrayList<Boolean> list){
+	public void setPath(ArrayList<Short> list){
 		for(int i = 0; i < list.size(); i++){
 			binaryPath.add(list.get(i));
 		}
 	}
 	
-	public void setPath(boolean b){
+	public void setPath(short i){
 		
-		binaryPath.add(b);
+		binaryPath.add(i);
 	}
-	public ArrayList<Boolean> getPath(){		
+	public ArrayList<Short> getPath(){		
 		return binaryPath;
 	}
 	
 	public String getCharacters(){
 		
 		return Characters;
+	}
+
+	public void setCharacters(String chars){
+		
+		Characters += chars;
 	}
 		
 	public long getValue(){
