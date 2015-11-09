@@ -10,8 +10,11 @@ public class Node {
 //	private short binaryPath;
 	private ArrayList<Short> binaryPath;
 	
+	private long generation;
+	
 	public Node(){
 		
+		Characters = "";
 	}
 	
 	public Node(String s, long freq){
@@ -67,4 +70,33 @@ public class Node {
 	public Node getRightNode(){
 		return right;
 	}	
+	
+	public String getPathAsString(){
+		String output = "";
+		for(int i = 0; i < binaryPath.size(); i++){
+			
+			output += binaryPath.get(i).toString();
+		}
+		return output;
+	}
+	
+	public long getGeneration(){
+		
+		return generation;
+	}
+	public void setGeneration(long l){
+		generation = l;
+	}
+	
+	public int getLength(){
+		
+		int length = 0; 
+		if(left != null || right != null){
+			length = this.left.getLength() + this.right.getLength();
+		}
+		else{
+			length = this.getPathAsString().length() +8;
+		}
+		return length;
+	}
 }
