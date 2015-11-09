@@ -47,8 +47,6 @@ public class HuffmanEncoding {
 		//Lies Datei und Zähle Aufkommen der Characters						
 		BufferedReader br = new BufferedReader(new FileReader(inputPath));
 		readFile(br);
-		//Init LookupTable
-//		initLookupTable();
 		//Baue Huffmann-Tree
 		buildHuffmanTree();
 		//Baue Lookup-Tabelle
@@ -57,11 +55,9 @@ public class HuffmanEncoding {
 		
 		OutputStream output = new FileOutputStream(outputPath +".txt");
 		bitOutput = new BitOutputStream(output);
-		
+
+		//Init LookupTable
 		buildLookupTable();	
-		
-//		System.out.println("size:" + treeLength);
-//		System.out.println(outputContent);
 		
 		treeContent = outputContent;
 		
@@ -69,9 +65,6 @@ public class HuffmanEncoding {
 		exportCompression(inputPath);
 		
 		fileContent = outputContent;
-		
-//		System.out.println(outputContent);
-//		System.out.println("dataSize:" + dataSize);
 		output.close();
 		bitOutput.close();
 
@@ -96,7 +89,6 @@ public class HuffmanEncoding {
 			
 			if(i >= bTreeSize.length) writtenBytes[i] = bTreeSize[i - bTreeSize.length];
 		}
-//		System.out.println("SizeINBinary: " + tempSize);
 		treeSize = tempSize;
 
 		byte [] content = new byte[(int) file.length() +4];
@@ -147,10 +139,6 @@ public class HuffmanEncoding {
 	}	
 	
 	private void buildLookupTable() throws IOException{
-	//	treeLength = huffmanTree.getLength();		
-		byte [] treeSize = intToByteArray(treeLength);		
-		
-//		System.out.println("TreeSize: "+treeLength);
 		findLowestLayer(huffmanTree);		
 	}
 	

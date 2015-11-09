@@ -7,7 +7,6 @@ public class Node {
 	private Node left, right;
 	private long value;
 	private String Characters;
-//	private short binaryPath;
 	private ArrayList<Short> binaryPath;
 	
 	private long generation;
