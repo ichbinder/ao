@@ -28,7 +28,7 @@ private JFrame frame = new JFrame();
 		// into integer pixels
 		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D ig2 = bi.createGraphics();		
-		paintNode(ig2, startNode, width / 2, spaceY, spaceX, spaceY);		
+		paintNode(ig2, startNode, width / 2, spaceY, spaceX, spaceY);
 		
 		ImageIO.write(bi, "PNG", new File(fileName +".PNG"));
 		

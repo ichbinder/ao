@@ -14,12 +14,10 @@ public class HuffmanDecoding {
 	private InputStream inputStream;
 	private Node huffmanTree;
 	private String inputContent;
-	private int treeLength;
-	
-	private int bitCounter;
-	
+	private int treeLength;	
+	private int bitCounter;	
 	private FileWriter fileWriter; 
-		
+	
 	public HuffmanDecoding(){}
 	
 	
@@ -60,12 +58,13 @@ public class HuffmanDecoding {
 		inputContent ="";
 		bitCounter = 0;
 		buildHuffmanTree(huffmanTree, 0);
-		System.out.println("bitCounter: " +bitCounter);
-
+		System.out.println("bitCounter: " +bitCounter);		
 		
 		System.out.println("converted:\n" +inputContent);
 		VisualizeTree visuTree = new VisualizeTree(huffmanTree, 2000, 400, 400, 40, "Input");	
-		
+	
+//		ReadFileContent(bitInput);
+//		ReadFile("src/ue5/META-INF/CompressedTextFile.txt");
 		decodeData("src/ue5/META-INF/DecompressedTextFile.txt", huffmanTree);
 	}
 			
@@ -131,6 +130,9 @@ public class HuffmanDecoding {
 				byte readByte = Byte.parseByte(bitString, 2);
 				char c = (char) readByte;
 				lowestNode.setCharacters("" + c);
+				if(c == 'I'){
+					int b = 0;
+				}
 				
 				inputContent += c;
 				lowestNode.setGeneration(gen);
@@ -149,13 +151,17 @@ public class HuffmanDecoding {
 		return inputNode;
 	}
 	
-	public void ReadFile(String path) throws FileNotFoundException{
+	
+	public void ReadFileContent(BitInputStream bitStream) throws IOException{
 
-		BitInputStream bitStream = new BitInputStream(new FileInputStream(path));
+		int dataSize = 0;
+//		bitStream = new BitInputStream(new FileInputStream(path));
 		System.out.println("WHOLE FILE");
-		while(bitStream.hasNextBit()) System.out.print(bitStream.readBit());
-		
-		bitStream.close();
+		while(bitStream.available() > 0){
+			System.out.print(bitStream.readBit());		
+			dataSize++;
+		}
 		System.out.println();
+		System.out.println("dataSize:"+ dataSize);
 	}
 }

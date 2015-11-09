@@ -2,9 +2,12 @@ package ue5;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.math.BigInteger;
@@ -25,6 +28,12 @@ public class HuffmanEncoding {
 	private BitOutputStream bitOutput;
 	private String outputContent = "";
 	private int treeLength = 0;
+	
+
+	String treeSize = "";
+	String treeContent = "";
+	String fileContent = "";
+
 	
 	public HuffmanEncoding(){
 		
@@ -51,17 +60,34 @@ public class HuffmanEncoding {
 		
 		buildLookupTable();	
 		
-		System.out.println("size:" + treeLength);
-		System.out.println(outputContent);
+//		System.out.println("size:" + treeLength);
+//		System.out.println(outputContent);
+		
+		treeContent = outputContent;
+		
 		outputContent = "";
 		exportCompression(inputPath);
 		
-		System.out.println(outputContent);
+		fileContent = outputContent;
+		
+//		System.out.println(outputContent);
+//		System.out.println("dataSize:" + dataSize);
 		output.close();
 		bitOutput.close();
 
-		RandomAccessFile raf = new RandomAccessFile(new File(outputPath + ".txt"), "rw");
-		String tempSize = Integer.toBinaryString(289);	
+		addTreeSize(outputPath);		
+	}
+	
+	private void addTreeSize(String outputPath) throws IOException{
+		
+		FileInputStream fis = new FileInputStream(new File(outputPath+ ".txt"));				
+		
+		File file = new File(outputPath + ".txt");
+		
+		String tempSize = Integer.toBinaryString(treeLength);	
+
+		int size = 32-tempSize.length();
+		for(int i = 0; i < size; i++) tempSize = 0+ tempSize;
 		
 		byte[] bTreeSize = new BigInteger(tempSize, 2).toByteArray();	
 
@@ -70,22 +96,27 @@ public class HuffmanEncoding {
 			
 			if(i >= bTreeSize.length) writtenBytes[i] = bTreeSize[i - bTreeSize.length];
 		}
+//		System.out.println("SizeINBinary: " + tempSize);
+		treeSize = tempSize;
 
-		byte [] content = new byte[(int) raf.length() +4];
+		byte [] content = new byte[(int) file.length() +4];
+
 		content[0] = writtenBytes[0];
 		content[1] = writtenBytes[1];
 		content[2] = writtenBytes[2];
 		content[3] = writtenBytes[3];
-				
-		raf.readFully(content, 4, content.length -4);
 		
-//		raf.write(writtenBytes, 0, 4);
-//		raf.getChannel().position(4);
-		raf.write(content, 0, content.length);
-	
-		raf.close();		
+		fis.read(content, 4, content.length -4);
+		fis.close();
+		file.delete();
+		
+		FileOutputStream fos = new FileOutputStream(new File(outputPath+ ".txt"));		
+		fos.write(content);
+		fos.close();		
+		
 	}
-			
+
+	int dataSize = 0;
 	private void exportCompression(String inputPath) throws IOException{		
 				
 		BufferedReader brInput = new BufferedReader(new FileReader(inputPath));
@@ -95,8 +126,9 @@ public class HuffmanEncoding {
 			char c = (char) brInput.read();
 			ArrayList<Short> huffmanPath = lookupTable.get(c);
 			for(int i = 0; i < huffmanPath.size(); i++){
-				bitOutput.write(huffmanPath.get(i));
+				bitOutput.writeBit(huffmanPath.get(i));
 				outputContent+= huffmanPath.get(i);
+			    dataSize++;
 			}
 		}
 		
@@ -118,8 +150,7 @@ public class HuffmanEncoding {
 	//	treeLength = huffmanTree.getLength();		
 		byte [] treeSize = intToByteArray(treeLength);		
 		
-		System.out.println("TreeSize: "+treeLength);
-//		bitOutput.write(treeSize);
+//		System.out.println("TreeSize: "+treeLength);
 		findLowestLayer(huffmanTree);		
 	}
 	
@@ -301,7 +332,7 @@ public class HuffmanEncoding {
 		try{
 			long lineCount = 0;
 			while(br.ready()){
-			
+			 
 				String sLine = br.readLine();
 				countOccurences(sLine.toCharArray());
 				if(br.ready()){
@@ -323,7 +354,16 @@ public class HuffmanEncoding {
 		encode.EncodeFile("src/ue5/META-INF/TestTextFile.txt", "src/ue5/META-INF/CompressedTextFile");
 		
 		HuffmanDecoding decode = new HuffmanDecoding();
-		decode.ReadFile("src/ue5/META-INF/CompressedTextFile.txt");		
+		
+		InputStream is = new FileInputStream("src/ue5/META-INF/CompressedTextFile.txt");
+		BitInputStream bis = new BitInputStream(is);
+		
+		System.out.println("TreeSize:" + encode.treeSize);
+		System.out.println("TreeContent:" + encode.treeContent);
+		System.out.println("FileContent:" + encode.fileContent);
+		
+		decode.ReadFileContent(bis);		
+//		decode.ReadFile("src/ue5/META-INF/CompressedTextFile.txt");		
 		decode.decodeFile("src/ue5/META-INF/CompressedTextFile.txt");		
 	}
 }
