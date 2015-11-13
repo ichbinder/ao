@@ -94,8 +94,19 @@ public class Node {
 			length = this.left.getLength() + this.right.getLength();
 		}
 		else{
-			length = this.getPathAsString().length() +8;
+			length = this.getBitString().length() +8;
 		}
 		return length;
+	}
+	
+	public String getBitString(){
+		
+		String bits = binaryPath.toString();
+		
+		bits = bits.replace("[", "");
+		bits = bits.replace("]", "");
+		bits = bits.replace(" ", "");
+		bits = bits.replace(",", "");
+		return bits;
 	}
 }

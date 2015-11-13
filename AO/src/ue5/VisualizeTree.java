@@ -28,6 +28,7 @@ private JFrame frame = new JFrame();
 		// into integer pixels
 		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D ig2 = bi.createGraphics();		
+//		paintNode(ig2, startNode, (int) (width * 0.7), spaceY, spaceX, spaceY);
 		paintNode(ig2, startNode, width / 2, spaceY, spaceX, spaceY);
 		
 		ImageIO.write(bi, "PNG", new File(fileName +".PNG"));
@@ -51,6 +52,9 @@ private JFrame frame = new JFrame();
 			g.drawLine(x-spaceX, y, x+spaceX, y); //Horizontal				
 			paintNode(g, n.getLeftNode(), x-spaceX, y, spaceX/2, spaceY ); //Links
 			paintNode(g, n.getRightNode(), x+spaceX, y, spaceX /2, spaceY); //Rechts
+//			paintNode(g, n.getLeftNode(), x-spaceX, y, (int)(spaceX * 0.7), spaceY ); //Links
+//			paintNode(g, n.getRightNode(), x+spaceX, y, (int) (spaceX * 0.7), spaceY); //Rechts
+
 			
 		}
 		else{				

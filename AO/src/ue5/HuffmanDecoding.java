@@ -42,11 +42,12 @@ public class HuffmanDecoding {
 		InputStream input = new FileInputStream(inputPath);
 		bitInput = new BitInputStream(input);
 
-		System.out.println("BITS");
+//		System.out.println("BITS");
 		for(int i = 0; i < 32; i++){
-			System.out.print(bitInput.readBit());
-			
+			int a = bitInput.readBit();
+//			System.out.print(a);
 		}
+//		System.out.println();
 		
 		huffmanTree = new Node();
 		inputContent ="";
@@ -55,7 +56,7 @@ public class HuffmanDecoding {
 		System.out.println("bitCounter: " +bitCounter);		
 		
 		System.out.println("converted:\n" +inputContent);
-		VisualizeTree visuTree = new VisualizeTree(huffmanTree, 2000, 400, 400, 40, "Input");	
+//		VisualizeTree visuTree = new VisualizeTree(huffmanTree, 2000, 400, 400, 40, "Input");	
 		decodeData("src/ue5/META-INF/DecompressedTextFile.txt", huffmanTree);
 	}
 			
@@ -107,16 +108,28 @@ public class HuffmanDecoding {
 			bitCounter++;
 			if(bit == 1){
 				sBuildOutput += "1";
+				System.out.print("1");
 				Node lowestNode = new Node();
 				String bitString = "";
-				for(int i = 0; i < 8; i++){
-					
+				for(int i = 0; i < 8; i++){					
 					bitString += bitInput.readBit();
 				}
 				bitCounter +=8;
+				System.out.print(bitString);
+
+				byte readByte = 0;
+				try{
+					readByte = Byte.parseByte(bitString, 2);
+				}
+				catch(NumberFormatException nfe){
+					System.out.println();
+					System.out.println(nfe.toString());
+					System.out.println(bitString);
+					System.exit(-1);
+				}
 				
-				byte readByte = Byte.parseByte(bitString, 2);
 				char c = (char) readByte;
+//				System.out.print(c);
 				lowestNode.setCharacters("" + c);
 				
 				inputContent += c;
@@ -124,6 +137,7 @@ public class HuffmanDecoding {
 				return lowestNode;
 			}
 			else{
+				System.out.print("0");
 				inputNode.setGeneration(gen);
 				Node leftChild = buildHuffmanTree(new Node(), gen+1);
 				Node rightChild = buildHuffmanTree(new Node(), gen+1);
@@ -137,13 +151,14 @@ public class HuffmanDecoding {
 	}
 	
 	
-	public void ReadFileContent(BitInputStream bitStream) throws IOException{
+	public void ReadFileContent(BitInputStream bitStream, int max) throws IOException{
 
 		int dataSize = 0;
 		System.out.println("WHOLE FILE");
 		while(bitStream.available() > 0){
 			System.out.print(bitStream.readBit());		
 			dataSize++;
+			if(dataSize == max) break;
 		}
 		System.out.println();
 		System.out.println("dataSize:"+ dataSize);
