@@ -407,11 +407,10 @@ public class HuffmanEncoding {
 	private void countOccurences(char [] cLine){
 
 		for(int i = 0; i < cLine.length; i++){	
-			byte charInByte = (byte) cLine[i];
-			if(!frequencies.containsKey(cLine[i]) && charInByte != -1){
+			if(!frequencies.containsKey(cLine[i])){
 				frequencies.put(cLine[i], Long.valueOf(0));
-				frequencies.put(cLine[i], frequencies.get(cLine[i]) + 1);
 			}
+			frequencies.put(cLine[i], frequencies.get(cLine[i]) + 1);
 		}
 	}
 	
@@ -457,7 +456,12 @@ public class HuffmanEncoding {
 		System.out.println("Done in:"+ (sysTimeEnd - sysTimeStart)/ 1000000);
 		System.out.println(encode.treeBits);
 		System.out.println(encode.treeContent);
-		VisualizeTree visuTree = new VisualizeTree(encode.huffmanTree, 5250, 700, 1250, 40, "src/ue5/META-INF/" + visualPath);			
+//		VisualizeTree visuTree = new VisualizeTree(encode.huffmanTree, 100000, 2000, 59800, 40, "src/ue5/META-INF/" + visualPath);			
+//		VisualizeTree visuTree = new VisualizeTree(encode.huffmanTree, 86000, 4160, 20000, 60, "src/ue5/META-INF/" + visualPath);			
+		VisualizeTree visuTree = new VisualizeTree(encode.huffmanTree.getRightNode(), 43000, 4160, 10000, 60, "src/ue5/META-INF/" + visualPath);			
+		
+//		VisualizeTree visuTree = new VisualizeTree(encode.huffmanTree.getLeftNode(), 86000, 4160, 20000, 60, "src/ue5/META-INF/" + visualPath);			
+
 		
 		HuffmanDecoding decode = new HuffmanDecoding();	
 		sysTimeStart = System.nanoTime();
@@ -473,10 +477,10 @@ public class HuffmanEncoding {
 		
 		HuffmanEncoding huffmanEncode = new HuffmanEncoding();
 		huffmanEncode.EncodeAndDecodeFile("ascii_peter_pan");
-		huffmanEncode.EncodeAndDecodeFile("ascii_little_woman");
+/*		huffmanEncode.EncodeAndDecodeFile("ascii_little_woman");
 		huffmanEncode.EncodeAndDecodeFile("ASCII_great_expectations");
 		huffmanEncode.EncodeAndDecodeFile("ascii_Treasure_island");
 		huffmanEncode.EncodeAndDecodeFile("ascii_war_and_peace");
-
+*/
 	}
 }
