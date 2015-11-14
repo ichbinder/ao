@@ -18,7 +18,7 @@ import java.io.IOException;
 */
 public class BitInputStream extends InputStream {
  private InputStream input;    // actual source to read from
- private int digits;           // buffer to build up next byte's digits <= 8
+ public int digits;           // buffer to build up next byte's digits <= 8
  private int numDigits;        // how many digits are currently in buffer
  private boolean bitMode;      // true if writing bits; false to debug ASCII
  private BitOutputStream partner;  // another stream to monitor for EOF

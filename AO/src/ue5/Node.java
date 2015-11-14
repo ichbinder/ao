@@ -5,35 +5,46 @@ import java.util.ArrayList;
 public class Node {
 
 	private Node left, right;
-	private final long value;
-	private final String Characters;
-//	private short binaryPath;
-	private ArrayList<Boolean> binaryPath;
+	private long value;
+	private String Characters;
+	private ArrayList<Short> binaryPath;
+	
+	private long generation;
+	
+	public Node(){
+		
+		Characters = "";
+	}
 	
 	public Node(String s, long freq){
 
 		value = freq;		
 		Characters = s;
-		binaryPath = new ArrayList<Boolean>();
+		binaryPath = new ArrayList<Short>();
 	}
 	
-	public void setPath(ArrayList<Boolean> list){
+	public void setPath(ArrayList<Short> list){
 		for(int i = 0; i < list.size(); i++){
 			binaryPath.add(list.get(i));
 		}
 	}
 	
-	public void setPath(boolean b){
+	public void setPath(short i){
 		
-		binaryPath.add(b);
+		binaryPath.add(i);
 	}
-	public ArrayList<Boolean> getPath(){		
+	public ArrayList<Short> getPath(){		
 		return binaryPath;
 	}
 	
 	public String getCharacters(){
 		
 		return Characters;
+	}
+
+	public void setCharacters(String chars){
+		
+		Characters += chars;
 	}
 		
 	public long getValue(){
@@ -58,4 +69,44 @@ public class Node {
 	public Node getRightNode(){
 		return right;
 	}	
+	
+	public String getPathAsString(){
+		String output = "";
+		for(int i = 0; i < binaryPath.size(); i++){
+			
+			output += binaryPath.get(i).toString();
+		}
+		return output;
+	}
+	
+	public long getGeneration(){
+		
+		return generation;
+	}
+	public void setGeneration(long l){
+		generation = l;
+	}
+	
+	public int getLength(){
+		
+		int length = 0; 
+		if(left != null || right != null){
+			length = this.left.getLength() + this.right.getLength();
+		}
+		else{
+			length = this.getBitString().length() +8;
+		}
+		return length;
+	}
+	
+	public String getBitString(){
+		
+		String bits = binaryPath.toString();
+		
+		bits = bits.replace("[", "");
+		bits = bits.replace("]", "");
+		bits = bits.replace(" ", "");
+		bits = bits.replace(",", "");
+		return bits;
+	}
 }
