@@ -13,21 +13,8 @@ public class Insertionsort {
 		int max = 100000;
 		int min = 1;
 		
-		for (int i = 0; i < 300; i++) {
-			n.add(i*100000000);
-			int[] conv = convertIntegers(n);
-			long timeStart = System.nanoTime();
-			insertionSort(conv);
-			long timeStop = System.nanoTime();
-			System.out.println(conv.length+";"+(timeStop - timeStart));
-		}
-
-		
-//		for (int k = 0; k < 300; k++) {
-//			for (int i = 0; i < 500; i++) {
-//				int randomNum = ThreadLocalRandom.current().nextInt(min, max + 1);
-//				n.add(randomNum);
-//			}
+//		for (int i = 0; i < 300; i++) {
+//			n.add(i*100000000);
 //			int[] conv = convertIntegers(n);
 //			long timeStart = System.nanoTime();
 //			insertionSort(conv);
@@ -35,6 +22,23 @@ public class Insertionsort {
 //			System.out.println(conv.length+";"+(timeStop - timeStart));
 //		}
 
+		long midel = 0;
+		long lg = 0;
+		
+		for (int k = 0; k < 100; k++) {
+			for (int i = 0; i < 500; i++) {
+				int randomNum = ThreadLocalRandom.current().nextInt(min, max + 1);
+				n.add(randomNum);
+			}
+			int[] conv = convertIntegers(n);
+			long timeStart = System.nanoTime();
+			insertionSort(conv);
+			long timeStop = System.nanoTime();
+			midel += (timeStop - timeStart);
+			lg += conv.length;
+			System.out.println(lg/100 + ";" + midel/100);
+			
+		}
 	}
 	
 	public static void insertionSort(int[] A)
