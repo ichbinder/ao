@@ -37,9 +37,15 @@ public class VisualizeTree {
 		g.setColor(Color.black);
 		if(n.getLeftNode() != null || n.getRightNode() != null){
 			g.drawLine(x, y,x , y+spaceY);//Vertikal
-			y = y+spaceY;
+			y = y+spaceY;	
+			y = y+spaceY / 2;
+			String sValue = Long.toString(n.getValue());
+			g.drawString(sValue, x, y);
+			y = y+spaceY / 2;		
+			g.drawString(n.getCharacters(), x - n.getCharacters().length() / 2, y);
 			g.drawString("0", x-spaceX, y);
-			g.drawString("1", x+spaceX, y);
+			g.drawString("1", x+spaceX, y);		
+			
 			g.drawLine(x-spaceX, y, x+spaceX, y); //Horizontal				
 			paintNode(g, n.getLeftNode(), x-spaceX, y, spaceX/2, spaceY ); //Links
 			paintNode(g, n.getRightNode(), x+spaceX, y, spaceX /2, spaceY); //Rechts

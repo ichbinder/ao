@@ -440,50 +440,43 @@ public class HuffmanEncoding {
 		}
 	}	
 	
-	
-	public static void main(String[] args) throws IOException {
+	public void EncodeAndDecodeFile(String fileName) throws IOException{
 		
+		String inputPath = fileName;
+		String outputPath = "compressed_"+fileName; 
+		String uncompressPath = "uncompressed_" + fileName; 
+		String visualPath = "huffmanTree_" + fileName;		
 		
-		String inputPath = "ascii_little_woman";
-		String outputPath = "compressed_little_woman";
-		String uncompressPath = "uncompressed_little_woman";
-		
-				
 		HuffmanEncoding encode = new HuffmanEncoding();
 		
 		long sysTimeStart = System.nanoTime();
 		System.out.println("Compressing");
 		encode.EncodeFile("src/ue5/META-INF/"+ inputPath + ".txt", "src/ue5/META-INF/" +outputPath + ".txt");
-//		System.out.println("TreeSize:" + encode.treeLength);
-//		encode.EncodeFile("src/ue5/META-INF/TestTextFile.txt", "src/ue5/META-INF/CompressedTextFile");
 		long sysTimeEnd = System.nanoTime();
 		
 		System.out.println("Done in:"+ (sysTimeEnd - sysTimeStart)/ 1000000);
 		System.out.println(encode.treeBits);
 		System.out.println(encode.treeContent);
-		VisualizeTree visuTree = new VisualizeTree(encode.huffmanTree, 5500, 500, 1250, 40, "Output");			
+		VisualizeTree visuTree = new VisualizeTree(encode.huffmanTree, 5250, 700, 1250, 40, "src/ue5/META-INF/" + visualPath);			
 		
-		HuffmanDecoding decode = new HuffmanDecoding();
-		
-//		InputStream is = new FileInputStream("src/ue5/META-INF/CompressedTextFile.txt");
-	//	InputStream is = new FileInputStream("src/ue5/META-INF/Compressed_Great_Expectations.txt");
-
-//		BitInputStream bis = new BitInputStream(is);
-		
-		/*
-		System.out.println("TreeSize:" + encode.treeSize);
-		System.out.println("TreeContent:" + encode.treeContent);
-		System.out.println("FileContent:" + encode.fileContent);
-		*/
-		
-//		decode.ReadFileContent(bis);		
-//		decode.ReadFile("src/ue5/META-INF/CompressedTextFile.txt");		
-//		decode.decodeFile("src/ue5/META-INF/CompressedTextFile.txt");		
+		HuffmanDecoding decode = new HuffmanDecoding();	
 		sysTimeStart = System.nanoTime();
 		decode.decodeFile("src/ue5/META-INF/" + outputPath +".txt", "src/ue5/META-INF/" + uncompressPath + ".txt");
 		sysTimeEnd = System.nanoTime();
 		
 		System.out.println("Done in:"+ (sysTimeEnd - sysTimeStart)/ 1000000);
-		System.exit(0);
+
+	}
+	
+	
+	public static void main(String[] args) throws IOException {
+		
+		HuffmanEncoding huffmanEncode = new HuffmanEncoding();
+		huffmanEncode.EncodeAndDecodeFile("ascii_peter_pan");
+		huffmanEncode.EncodeAndDecodeFile("ascii_little_woman");
+		huffmanEncode.EncodeAndDecodeFile("ASCII_great_expectations");
+		huffmanEncode.EncodeAndDecodeFile("ascii_Treasure_island");
+		huffmanEncode.EncodeAndDecodeFile("ascii_war_and_peace");
+
 	}
 }
