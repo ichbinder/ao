@@ -17,13 +17,10 @@ import javax.swing.JPanel;
 
 public class VisualizeTree {
 
-private JFrame frame = new JFrame();
+//private JFrame frame = new JFrame();
 	
 	public VisualizeTree(Node startNode, int width, int height, int spaceX, int spaceY, String fileName) throws IOException {
-	
-//		TreePanel treePanel = new TreePanel(startNode, width, height, spaceX, spaceY);
-	//	frame.setContentPane(new TreePanel(startNode, spaceX, spaceY));
-	
+		
 		// TYPE_INT_ARGB specifies the image format: 8-bit RGBA packed
 		// into integer pixels
 		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -31,16 +28,10 @@ private JFrame frame = new JFrame();
 //		paintNode(ig2, startNode, (int) (width * 0.7), spaceY, spaceX, spaceY);
 		paintNode(ig2, startNode, width / 2, spaceY, spaceX, spaceY);
 		
-		ImageIO.write(bi, "PNG", new File(fileName +".PNG"));
-		
-//		frame.setTitle("HuffmanTree-Graph");
-//		frame.setSize(width, height);
-		
-//		JPanel jp = new JPanel();
-//		frame.setLocation(500, 0);
-//		frame.setVisible(false);
+		ImageIO.write(bi, "PNG", new File(fileName +".PNG"));		
 	}
 	
+	/***/
 	private void paintNode(Graphics g, Node n, int x, int y, int spaceX, int spaceY){
 
 		g.setColor(Color.black);
@@ -53,9 +44,7 @@ private JFrame frame = new JFrame();
 			paintNode(g, n.getLeftNode(), x-spaceX, y, spaceX/2, spaceY ); //Links
 			paintNode(g, n.getRightNode(), x+spaceX, y, spaceX /2, spaceY); //Rechts
 //			paintNode(g, n.getLeftNode(), x-spaceX, y, (int)(spaceX * 0.7), spaceY ); //Links
-//			paintNode(g, n.getRightNode(), x+spaceX, y, (int) (spaceX * 0.7), spaceY); //Rechts
-
-			
+//			paintNode(g, n.getRightNode(), x+spaceX, y, (int) (spaceX * 0.7), spaceY); //Rechts			
 		}
 		else{				
 			
@@ -99,13 +88,9 @@ private JFrame frame = new JFrame();
 			int n = permute(longestChain);
 
 			width = w;
-//			width = sX * n + sX *2;
-//			width = (int) Math.pow(longestChain);
-//			width = sX * longestChain + sX;
 			height = h;
 			
 			spaceX = sX;
-//			spaceX = sX * n / 2;
 			spaceY = sY;
 		}
 		

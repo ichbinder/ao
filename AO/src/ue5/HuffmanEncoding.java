@@ -1,17 +1,12 @@
 package ue5;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +31,11 @@ public class HuffmanEncoding {
 	String fileContent = "";
 	String treeBits = "";
 	
+	/**Konstrukor für die Huffman-Kodierung.
+	 * frequencies: Zeichen die im Text vorkommen und deren Anzahl
+	 * nodeList: Eine Liste worin alle Nodes abgelegt werden
+	 * lookupTable: Dient zum späteren kodieren des eigentlichen Textes
+	 * */
 	public HuffmanEncoding(){
 		
 		frequencies = new HashMap<Character, Long>();
@@ -43,6 +43,11 @@ public class HuffmanEncoding {
 		lookupTable = new HashMap<Character, Node>();
 	}
 	
+	/**Enkodiert eine ASCII-Textdatei mit Huffman-Kodierung. 
+	 * 1. Es wird der Huffman-Baum gebildet.
+	 * 2. Eine neue Datei wird erzeugt worin zuerst der Baum und danach der Textinhalt komprimiert gespeichert wird.
+	 * 3. Die Größe des Baumes (welche beim Schreiben mitgezählt wurde) wird an den Dateianfang gesetzt, der frühere Dateiinhalt wird dann hinzugefügt.
+	 */ 
 	public void EncodeFile(String inputPath, String outputPath) throws IOException{
 
 		//Lies Datei und Zähle Aufkommen der Characters						
@@ -64,16 +69,13 @@ public class HuffmanEncoding {
 
 //		System.exit(0);
 		
-		OutputStream output = new FileOutputStream(outputPath +".txt");
+		OutputStream output = new FileOutputStream(outputPath);
 		bitOutput = new BitOutputStream(output);
 
 		//Init LookupTable
 		System.out.println("Build LookupTable");
 
-		buildLookupTable();	
-		
-		
-		
+		buildLookupTable();			
 		printLookupTable();
 		
 		System.out.println("DONE");
@@ -98,11 +100,16 @@ public class HuffmanEncoding {
 		System.out.println("DONE");			
 	}
 	
+	/**Da Vorkalkulationen zur Baumgröße fehlschlugen wird erst der Baum in die Ausgangsdatei geschrieben, sowie der kodierte Textinhalt.
+	 * Durch das Mitzählen der Bits beim Schreiben des Baumes ist die richtige Bitanzahl nun vorhanden. Diese wird am Anfang der Datei 
+	 * als Integerwert mit GENAU 4 Bytes gespeichert, um diesen wieder korrekt rekonstruieren zu können. Der eigentliche Dateninhalt wird
+	 * an die Datei wieder angehängt.
+	 * @param outputPath Pfad zur komprimierten Ausgangsdatei*/
 	private void addTreeSize(String outputPath) throws IOException{
 		
-		FileInputStream fis = new FileInputStream(new File(outputPath+ ".txt"));				
+		FileInputStream fis = new FileInputStream(new File(outputPath));				
 		
-		File file = new File(outputPath + ".txt");
+		File file = new File(outputPath);
 		
 		String tempSize = Integer.toBinaryString(treeLength);	
 
@@ -129,15 +136,23 @@ public class HuffmanEncoding {
 		fis.close();
 		file.delete();
 		
-		FileOutputStream fos = new FileOutputStream(new File(outputPath+ ".txt"));		
+		FileOutputStream fos = new FileOutputStream(new File(outputPath));		
 		fos.write(content);
 		fos.close();		
 		
+/*		File fileToDelete = new File(outputPath + ".txt");
+		fileToDelete.delete();
+		
+		
+		
+		File fileToRename = new File(outputPath + "tree.txt");
+		boolean b = fileToRename.renameTo(new File(outputPath));
+		System.out.println(fileToRename.getAbsolutePath());
+*/		
 	}
 
-	int dataSize = 0;
-	int iLines = 0;
 	
+	/**Gibt die Code-Tabelle des Huffman-Baumes an die Konsole aus.*/
 	private void printLookupTable(){
 		
 		for (Entry<Character, Node> entry : lookupTable.entrySet()) {  // Itrate through hashmap
@@ -148,21 +163,28 @@ public class HuffmanEncoding {
 			System.out.println(":" + entry.getValue().getBitString());
         }
 	}
+	
+	/**Exportiert die eingelesene Datei mit Huffman-Kompriemierung.
+	 * @path inputPath Pfad zur zu komprimierenden Datei*/
 	private void exportCompression(String inputPath) throws IOException{		
 
+		//Ermittlung der Dateigröße in Byte
 		FileInputStream fr = new FileInputStream(inputPath);
 		long size = fr.getChannel().size();
 		fr.close();
 		
+		//BufferedReader zum Lesen der Datei mit selbstfestgelegtem Buffer
 		BufferedReader brInput = new BufferedReader(new FileReader(inputPath));
 		int length = 1024;
 		char chars []  = new char [1024];
+		
 		
 		while(brInput.ready()){
 
 			brInput.read(chars, 0, length);
 			for(int i = 0; i < length; i++){
 
+				//Wenn keine Escapesequenz (-1) vorhanden ist dann Schreibe Buchstaben als Bitstring von der Huffman-Codetabelle
 				byte charInByte = (byte) chars[i];
 				if(charInByte != -1){
 					String bits = lookupTable.get(chars[i]).getBitString();
@@ -177,26 +199,16 @@ public class HuffmanEncoding {
 		bitOutput.close();
 		brInput.close();
 	}
-		
-	private static byte[] intToByteArray(int a)
-	{
-	    return new byte[] {
-	        (byte) ((a >> 24) & 0xFF),
-	        (byte) ((a >> 16) & 0xFF),   
-	        (byte) ((a >> 8) & 0xFF),   
-	        (byte) (a & 0xFF)
-	    };
-	}	
-	
+
+	/**Erstellt den LookupTable, worin die Eingabe eines Zeichens einen Binärpfad (Bitstring) vom Huffman-Baum zurückgibt.*/
 	private void buildLookupTable() throws IOException{
 		findLowestLayer(huffmanTree);		
 	}
-	
-	private boolean isBitSet(byte b, int bit)
-	{
-		return (b & (1 << bit)) != 0;
-	}
-	
+
+	/**Gibt den Bitwert an einer bestimmten Stelle im Byte-Array zurück.
+	 * @param data aktuelles Byte-Array
+	 * @param pos aktuell untersuchte Position
+	 * @return den Bitwert an der gesuchten Stelle*/
 	private static int getBit(byte[] data, int pos) {
 	      int posByte = pos/8; 
 	      int posBit = pos%8;
@@ -205,6 +217,12 @@ public class HuffmanEncoding {
 	      return valInt;
 	   }
 	
+	/**Sucht den Pfad zur niedrigsten Node um den Huffmann-Baum in die Ausgangsdatei schreiben zu können.
+	 * Es wird die Länge des Huffmann-Baums erhöht.
+	 * Immer wenn der Baum noch Kinder hat wird eine "0" als Bit geschrieben. Sollte der 
+	 * Sollte die Node keine Kinder haben wird eine "1" geschrieben. 
+	 * Hier wurde nun die unterste Schicht erreicht und der Buchstaben wird als BitString geschrieben.
+	 * @param n = aktuell untersuchte Node*/
 	private void findLowestLayer(Node n){
 		
 		treeLength++;
@@ -222,17 +240,11 @@ public class HuffmanEncoding {
 			treeLength+=8;
 			bitOutput.writeBits(bitString);			
 			outputContent += "1";
-			if(n.getCharacters().charAt(0) == '@'){
-				int a = 0;
-			}
 			
-			treeContent +="1";
-			
+			treeContent +="1";			
 			treeContent += n.getCharacters();			
 			treeContent += "       ";
 			
-//			outputContent += n.getCharacters();
-//			outputContent += "|"+bitString + "|";
 			outputContent += bitString;
 			lookupTable.put((char) n.getCharacters().charAt(0),n);			
 		}
@@ -246,6 +258,10 @@ public class HuffmanEncoding {
 		}
 	}
 	
+	/**Baut den Huffmann-Baum aus dem gezählten Vorkommen der ausgelesenen Buchstaben.
+	 * 1. Buchstaben werden zu Nodes umgewandelt
+	 * 2. Es werden Nodepaare gebildet und Verbindugen gezogen (von unten nach oben)
+	 * 3. Binärpfade werden an den Nodes gebildet (von oben nach unten)*/
 	private void buildHuffmanTree(){
 	
 		charactersToNodes();		
@@ -255,6 +271,10 @@ public class HuffmanEncoding {
 		labelPaths(huffmanTree.getRightNode(), (short) 1);		
 	}
 
+	/**Kennzeichnet die linken und rechten Nodes für den Binärpfad. Anfangspunkt.
+	 * @param node der Startpunkt (Huffmann-Node)
+	 * @param binary Binär-Ziffer für die Huffmannode selbst
+	 * */
 	private void labelPaths(Node node, short binary){
 
 		node.setPath(binary);
@@ -267,7 +287,14 @@ public class HuffmanEncoding {
 			labelPaths(node.getRightNode(), node.getPath(), (short) 1);			
 		}
 	}
-		
+	
+	/**Kennzeichnet die linken und rechten Nodes für den Binärpfad. Hier wird auch der schon entstandene Binärpfad des Elternteils mitgegeben.
+	 * Diese Funktion ruft sich selbst rekursiv so lange auf, bis die unterste Schicht des Baumes erreicht wurde 
+	 * (die Node die einen einzelnen Buchstaben abbildet).
+	 * @param node die Elternnode
+	 * @param arrayList der Binärpfad der Elternnode
+	 * @param binary Binär-Ziffer für die eigene Node (0 = links, 1 = rechts)
+	 * */
 	private void labelPaths(Node node, ArrayList<Short> arrayList, short binary){
 		
 		node.setPath(arrayList);
@@ -281,7 +308,11 @@ public class HuffmanEncoding {
 			labelPaths(node.getRightNode(), node.getPath(), (short) 1);			
 		}
 	}
-		
+	
+	
+	/**Baut die Paar-Verbindungen unter den existieredenen Nodes auf.
+	 * Es wird immer nach den zwei niedrigsten Nodes gesucht, welche zu Kind-Nodes für eine neue Eltern-Node werden.
+	 *@return Den fertigen Huffmann-Baum, welcher die oberste Eltern-Node abbildet.*/
 	private Node buildConnections(){
 		
 		while(nodeList.size() > 2){
@@ -321,6 +352,9 @@ public class HuffmanEncoding {
 		return huffmanNode;
 	}
 	
+	/**Sucht die Node mit dem kleinsten Character-Vorkommen.
+	 * Wurde diese erreicht wird die Node aus der zusammengefassten Node-Liste gelöscht und zurückgegeben.
+	 * @Return Node mit dem kleinsten Character-Vorkommen*/
 	private Node findSmallestNode(){
 
 		Node minimumNode;
@@ -340,6 +374,8 @@ public class HuffmanEncoding {
 		return minimumNode;
 	}
 	
+	/**Erstellt aus allen gefundenen Buchstaben Nodes mit entsprechenden Werten, wie seinem Vorkommen im Text.
+	 * Danach wird der Eintrag aus der Map für das Vorkommen des Buchstabens gelöscht.*/
 	private void charactersToNodes(){
 
 		//Gehe Alle Buchstaben durch
@@ -351,6 +387,8 @@ public class HuffmanEncoding {
 		}
 	}
 	
+	/**Sucht den kleinsten Value Eintrag in einer Map. Wurde dieser gefunden wird er aus der Map genommen.
+	 **/
 	private Entry<Character, Long> getMinimumEntry(){
 		
 		long minValueInMap=(Collections.min(frequencies.values())); 
@@ -377,7 +415,9 @@ public class HuffmanEncoding {
 		}
 	}
 	
-	/**Liest aus einem BufferedReader die Textzeilen. In jeder Zeile wird das Auftauchen von Characters gezählt*/
+	/**Liest aus einem BufferedReader den Textinhalt. In jedem ausgelesenen Stück wird das Auftauchen von Characters gezählt.
+	 * @param br lesender BufferedReader über die Datei
+	 * @param size Dateigrößte in Byte*/
 	private void readFile(BufferedReader br, long size){
 
 		try{
@@ -403,11 +443,17 @@ public class HuffmanEncoding {
 	
 	public static void main(String[] args) throws IOException {
 		
+		
+		String inputPath = "ascii_little_woman";
+		String outputPath = "compressed_little_woman";
+		String uncompressPath = "uncompressed_little_woman";
+		
+				
 		HuffmanEncoding encode = new HuffmanEncoding();
 		
 		long sysTimeStart = System.nanoTime();
 		System.out.println("Compressing");
-		encode.EncodeFile("src/ue5/META-INF/Random.txt", "src/ue5/META-INF/Random_compressed");
+		encode.EncodeFile("src/ue5/META-INF/"+ inputPath + ".txt", "src/ue5/META-INF/" +outputPath + ".txt");
 //		System.out.println("TreeSize:" + encode.treeLength);
 //		encode.EncodeFile("src/ue5/META-INF/TestTextFile.txt", "src/ue5/META-INF/CompressedTextFile");
 		long sysTimeEnd = System.nanoTime();
@@ -415,6 +461,7 @@ public class HuffmanEncoding {
 		System.out.println("Done in:"+ (sysTimeEnd - sysTimeStart)/ 1000000);
 		System.out.println(encode.treeBits);
 		System.out.println(encode.treeContent);
+		VisualizeTree visuTree = new VisualizeTree(encode.huffmanTree, 5500, 500, 1250, 40, "Output");			
 		
 		HuffmanDecoding decode = new HuffmanDecoding();
 		
@@ -432,12 +479,11 @@ public class HuffmanEncoding {
 //		decode.ReadFileContent(bis);		
 //		decode.ReadFile("src/ue5/META-INF/CompressedTextFile.txt");		
 //		decode.decodeFile("src/ue5/META-INF/CompressedTextFile.txt");		
-//		sysTimeStart = System.nanoTime();
-		decode.decodeFile("src/ue5/META-INF/Random_compressed.txt");		
-//		sysTimeEnd = System.nanoTime();
+		sysTimeStart = System.nanoTime();
+		decode.decodeFile("src/ue5/META-INF/" + outputPath +".txt", "src/ue5/META-INF/" + uncompressPath + ".txt");
+		sysTimeEnd = System.nanoTime();
 		
-//		System.out.println("Done in:"+ (sysTimeEnd - sysTimeStart)/ 1000000);
-
-
+		System.out.println("Done in:"+ (sysTimeEnd - sysTimeStart)/ 1000000);
+		System.exit(0);
 	}
 }

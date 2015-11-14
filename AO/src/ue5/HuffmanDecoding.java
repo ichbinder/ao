@@ -20,7 +20,9 @@ public class HuffmanDecoding {
 	
 	public HuffmanDecoding(){}
 	
-	
+	/**Gibt die Länge des Huffman-Baumes in Bits zurück, welche am Anfang der kodierten Textdatei steht.
+	 * @param inputPath Pfad zur auszulesenen Datei
+	 * @return Größe des Huffman-Baums in Bits*/
 	public int getTreeLength(String inputPath) throws IOException{
 				
 		InputStream inputSize = new FileInputStream(inputPath);
@@ -35,46 +37,63 @@ public class HuffmanDecoding {
 		return length;
 	}
 	
-	public void decodeFile(String inputPath) throws IOException{
-		
+	/**Dekodiert Huffman-komprimierte Datei.
+	 * 1. Es wird die Größe des Baumes ausgelesen
+	 * 2. Es wird der Huffman-Baum rekonstuiert
+	 * 3. Der Textinhalt als Bitstring wird Stück für Stück mit dem Huffman-Pfad durchgegangen und rekonstruiert
+	 * @param inputPath Der Pfad zur auszuleseneen, komprimierten Datei*/
+	public void decodeFile(String inputPath, String uncompressedPath) throws IOException{
+
+		System.out.print("Get tree size: ");		
 		treeLength = getTreeLength(inputPath);
+		System.out.println(treeLength);		
 		
 		InputStream input = new FileInputStream(inputPath);
 		bitInput = new BitInputStream(input);
 
-//		System.out.println("BITS");
 		for(int i = 0; i < 32; i++){
-			int a = bitInput.readBit();
-//			System.out.print(a);
+			bitInput.readBit();
 		}
-//		System.out.println();
 		
 		huffmanTree = new Node();
 		inputContent ="";
-		bitCounter = 0;
-		buildHuffmanTree(huffmanTree, 0);
-		System.out.println("bitCounter: " +bitCounter);		
+		bitCounter = 0;		
 		
+		System.out.println("Decode tree:");
+		buildHuffmanTree(huffmanTree, 0);
 		System.out.println("converted:\n" +inputContent);
+		System.out.println("DONE");		
+		System.out.println("Decode File");
 //		VisualizeTree visuTree = new VisualizeTree(huffmanTree, 2000, 400, 400, 40, "Input");	
-		decodeData("src/ue5/META-INF/DecompressedTextFile.txt", huffmanTree);
+		decodeData(uncompressedPath, huffmanTree);
+		System.out.println("DONE");
+
 	}
-			
+	
+	/**Dekodiert eine Huffman-Komprimierte Datei.
+	 * @param decompressFilePath Pfad für die neue dekomprimierte Datei
+	 * @param node Der Startpunkt (Huffman-Baum)*/
 	private void decodeData(String decompressFilePath, Node node) throws IOException{
 		
 		fileWriter = new FileWriter(decompressFilePath);
-		String decompressedLine = "";
+//		String decompressedLine = "";
 		
 		while(bitInput.available() > 0){
 
 			String sChar = bitInput.readBit() == 0 ? getCharacter(node.getLeftNode()) : getCharacter(node.getRightNode());
 			fileWriter.write(sChar);
-			decompressedLine += sChar;
+		//	decompressedLine += sChar;
 		}
 		fileWriter.close();
-		System.out.println("decompressed:\n" + decompressedLine);
+//		System.out.println("decompressed:\n" + decompressedLine);
 	}
-	
+
+	/**Gibt das Zeichen zurück, welches sich hinter der Node verbirt. Hier wird die Funktion so oft rekursiv aufgerufen,
+	 * bis die aktuelle Node keine Kind-Nodes mehr besitzt. Sollte die Node Kinder haben wird der bitInputStream weiter 
+	 * ausgelesen und bei 0 wird die linke Kind-Node untersucht und bie 1 die rechts. Ist das Ende des Pfades erreicht und das Zeichen 
+	 * kann zurück gegeben werden.
+	 * @param n aktuelle Node
+	 * @return Das gesuchte Zeichen*/
 	private String getCharacter(Node n){
 
 		String chars = "";
@@ -89,7 +108,9 @@ public class HuffmanDecoding {
 		return chars;
 	}
 	
-	
+	/**Wandelt ein Bytearray (Größe 4) in ein Integer um.
+	 * @param b das umzuwandelne Byte-Array
+	 * @return das konvertierte Integer*/
 	private static int byteArrayToInt(byte[] b) 
 	{
 	    return   b[3] & 0xFF |
@@ -98,16 +119,23 @@ public class HuffmanDecoding {
 	            (b[0] & 0xFF) << 24;
 	}
 	
+	/**Rekonstruiert den Huffman-Baum. Solange die Anzahl der Bits kleiner der ausgelesenen Baumgröße ist wird der Baum rekonstruiert.
+	 * Solange der BitWert 0 auftaucht werden Kind-Nodes gebaut die wiederrum rekursiv diese Funktion wieder aufrufen. 
+	 * Nach dem der Rekursionsvorgang abgeschloßen ist werden die Kind-Nodes der Eltern-Node hinzugefügt.
+	 * Sollte der Bitwert 1 auftauchen wird eine Node erstellt die einen Character besitzt wird. 
+	 * Dieser ist als Originaler Characterwert in 8 Bits abgelegt, wird ausgelesen in Byte (Dezimalwert) umgewandelt und kann als char 
+	 * ausgelesen werden. Dieser wird der neuen Node hinzugefügt und zurückgegeben. 
+
+	 * WICHTIG: Es durften beim komprimierten NUR ASCII-ZEICHEN verwendet werden.
+	 * (Unsichtbare) Escape-Sequenzen oder z.B. Umlaute bringen den Algorithmus zum Scheitern. 
+	 **/
 	private Node buildHuffmanTree(Node inputNode, long gen) throws IOException{
 
-		String sBuildOutput = "";		
-		
 		while(bitInput.available() > 0 && bitCounter < treeLength){
 
 			int bit = bitInput.readBit();
 			bitCounter++;
 			if(bit == 1){
-				sBuildOutput += "1";
 				System.out.print("1");
 				Node lowestNode = new Node();
 				String bitString = "";
@@ -129,7 +157,6 @@ public class HuffmanDecoding {
 				}
 				
 				char c = (char) readByte;
-//				System.out.print(c);
 				lowestNode.setCharacters("" + c);
 				
 				inputContent += c;
@@ -141,7 +168,6 @@ public class HuffmanDecoding {
 				inputNode.setGeneration(gen);
 				Node leftChild = buildHuffmanTree(new Node(), gen+1);
 				Node rightChild = buildHuffmanTree(new Node(), gen+1);
-				//Node parent = new Node();
 				inputNode.setLeftNode(leftChild);
 				inputNode.setRightNode(rightChild);
 				return inputNode;
@@ -150,7 +176,10 @@ public class HuffmanDecoding {
 		return inputNode;
 	}
 	
-	
+	/**Liest den Inhalt der komprimierten Datei in Bits bis zu einem gegeben Maximum.
+	 * @param bitStream der aktuelle Stream zum Ausleden der komprimierten Datei
+	 * @param max Anzahl der maximal auszulesenen Bits.
+	 * */
 	public void ReadFileContent(BitInputStream bitStream, int max) throws IOException{
 
 		int dataSize = 0;
