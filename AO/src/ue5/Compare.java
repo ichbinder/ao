@@ -66,8 +66,8 @@ public class Compare {
 		OutputStream outputStream       = new FileOutputStream("sortComparisionSort2.csv");
 		Writer       outputStreamWriter = new OutputStreamWriter(outputStream);
 
-		outputStreamWriter.write("n;MergeSort;InsertionSort;QuickSort\n");
-		for (int i = 0; i < 1000; i++) {
+		outputStreamWriter.write("n;HeapSort;QuickSort\n");
+		for (int i = 0; i < 300; i++) {
 			
 			n.add(i*10000000);
 			int[] conv = convertIntegers(n, false);
@@ -118,6 +118,6 @@ public class Compare {
 	public static void main(String[] args) throws IOException {
 			
 			tests();
-			optimizedValues();
+//			optimizedValues();
 		}
 }
