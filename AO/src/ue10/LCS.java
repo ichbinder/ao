@@ -4,11 +4,11 @@ public class LCS {
 	private float c[][] = {};
 	private String b[][] = {};
 
-	public static void lengthLCS(float X[], float Y[]) {
+	public void lengthLCS(float X[], float Y[]) {
 		int m = X.length;
 		int n = Y.length;
-		float c[][] = {};
-		String b[][] = {};
+//		float c[][] = {};
+//		String b[][] = {};
 		for (int i = 0; i < m; i++)
 			c[i][0] = 0;
 		for (int j = 0; j < n; j++)
@@ -29,7 +29,7 @@ public class LCS {
 		}	
 	}
 	
-	public static float printLCS(String b[][], float X[], int i, int j) {
+	public float printLCS(String b[][], float X[], int i, int j) {
 		if (i == 0 || j == 0)
 			return 0.0f;
 		if (b[i][j] == "links oben"){
@@ -41,5 +41,13 @@ public class LCS {
 			printLCS(b, X, i, j-1);
 		}
 		return 0.0f;
+	}
+
+	public float[][] getC() {
+		return c;
+	}
+
+	public String[][] getB() {
+		return b;
 	}
 }
