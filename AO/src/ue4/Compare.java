@@ -56,7 +56,6 @@ public class Compare {
 	
 	// 1-300 mal den Vorgang wiederholen
 	// 100 * Messwerte mit der selben Reihe -> Mittelwert bilden
-
 	
 	
 	private static void tests() throws IOException{

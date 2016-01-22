@@ -1,9 +1,7 @@
 package Ue4_sortieren;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -80,10 +78,9 @@ public class Graph {
 				g.fillRect(x1-1, y1-1, 3, 3);
 				g.setColor(c);
 			}
-
 		}
-
-		private void paintCoordinates(Graphics g) {			
+		
+		private void paintCoordinates(Graphics g) {
 			g.setColor(Color.white);
 			g.fillRect(0, 0, width+margin_left+margin_right, height+margin_bottom+margin_top);
 			g.setColor(Color.black);
@@ -103,4 +100,3 @@ public class Graph {
 		}
 	}
 }
-
