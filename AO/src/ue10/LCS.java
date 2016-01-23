@@ -1,27 +1,18 @@
 package ue10;
 
-import java.nio.charset.Charset;
-import java.util.Random;
-
-import sun.security.util.Length;
-
 public class LCS {
 	private int c[][] = {};
 	private String b[][] = {};
-
+		
 	public void lengthLCS(String X[], String Y[]) {
 		int m = X.length;
 		int n = Y.length;		
-		
-//		seien b[1..m, 1..n] und c[0..m, 0..n] neue Tabellen
 
 		c = new int[m][n];
-		b = new String[m][n];
+		b = new String[m][n];		
 		
-//		float c[][] = {};
-//		String b[][] = {}; 
-		for (int i = 0; i < m; i++)	c[i][0] = 0;
-		for (int j = 0; j < n; j++)	c[0][j] = 0;
+		for (int i = 1; i < m; i++)	c[i][0] = 0;
+		for (int j = 1; j < n; j++)	c[0][j] = 0;
 
 		for (int i = 1; i < m; i++) {
 			for (int j = 1; j < n; j++) {
@@ -51,45 +42,10 @@ public class LCS {
 		}
 	}
 	
-	public String[][] createChains(String elements, int maxChars, int maxX, int maxY){
-		
-		String [][] chains = new String [maxY][maxX];
-		Random randomizer = new Random();
-		for(int y = 0; y < maxY; y++){
-			
-			for(int x = 0; x < maxX; x++){
-				
-				chains[y][x] = randomString(elements, randomizer, maxChars);
-			}
-		}
-		return chains;
-	}
-	
-	public String randomString(String elements, Random random, int maxLength){
-				
-		String randomString = "";
-		int maxChars = random.nextInt(maxLength);
-		
-		for(int c = 0; c < maxChars; c++){			
-			randomString += elements.charAt(random.nextInt(elements.length()-1));
-		}		
-		return randomString;
-	}
-	
-	private String removeDoubles(String segment){
-		
-		String removed = "";
-		for(int i = 0; i < segment.length(); i++){
-			
-			if(! removed.contains(segment.substring(i, i))){
-				removed += segment.charAt(i);
-			}
-		}				
-		return removed;
-	}
 	
 	public String [] createSegments(String segment){
 
+		segment = " "+segment;
 		String [] segments = new String[segment.length()];
 		
 		for(int i = 0; i < segments.length; i++){
@@ -99,19 +55,45 @@ public class LCS {
 		return segments;
 	}
 	
+	/**Gibt eine LCS von zwei verglichenen Sequenzen als Tabelle zurück.*/
+	public void createTable(String [] X, String [] Y){
+
+		int x = X.length;
+		int y = Y.length;
+
+		for(int h = 0; h < y; h++){
+			
+			System.out.print( "  | " + Y[h] + " |");			
+		}
+		System.out.println();
+		
+		for(int i = 0; i < x; i++){
+			
+			System.out.print( X[i] );			
+			for(int j = 0; j < y; j++){
+				System.out.print( " | " + this.c[i][j] + " | ");
+			}
+			System.out.println();
+		}		
+		
+		System.out.println();
+		System.out.println();
+	}
 	
 	public static void main(String[] args) {
 		
-		LCS lcs = new LCS();				
+		LCS lcs = new LCS();
 		
-//		lcs.b = lcs.createChains("ACGT", 12, 10, 10);		
-//		lcs.c = new float[10][10];		
+		String [] X = lcs.createSegments("ACGCTAC");		
+		String [] Y = lcs.createSegments("CTAC");
+				
+		//String [] X = lcs.createSegments("ABCB");	
+		//String [] Y = lcs.createSegments("BDCAB");
 		
-		String [] X = lcs.createSegments("ACGCTAC");
-		String [] Y = lcs.createSegments("CTAC");		
 		lcs.lengthLCS(X, Y);
-		
-		lcs.printLCS(lcs.b, X, X.length -1, Y.length -1);
-		
+		lcs.createTable(X, Y);
+
+		System.out.println("LCS Ergebnis:\n");
+		lcs.printLCS(lcs.b, X, X.length -1, Y.length -1);		
 	}
 }
