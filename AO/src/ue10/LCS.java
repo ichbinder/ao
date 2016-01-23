@@ -25,7 +25,7 @@ public class LCS {
 
 		for (int i = 1; i < m; i++) {
 			for (int j = 1; j < n; j++) {
-				if (X[i] == Y[j]) {
+				if (X[i].equals(Y[j])) {
 					c[i][j] = c[i-1][j-1] + 1;
 					b[i][j] = "links oben";
 				} else if (c[i-1][j] >= c[i][j-1]) {
@@ -39,9 +39,8 @@ public class LCS {
 		}	
 	}
 	
-	public float printLCS(String b[][], float X[], int i, int j) {
-		if (i == 0 || j == 0)
-			return 0.0f;
+	public void printLCS(String b[][], String X[], int i, int j) {
+		if (i == 0 || j == 0) return;
 		if (b[i][j] == "links oben"){
 			printLCS(b, X, i-1, j-1);
 			System.out.println(X[i]);
@@ -50,7 +49,6 @@ public class LCS {
 		} else {
 			printLCS(b, X, i, j-1);
 		}
-		return 0.0f;
 	}
 	
 	public String[][] createChains(String elements, int maxChars, int maxX, int maxY){
@@ -111,6 +109,9 @@ public class LCS {
 		
 		String [] X = lcs.createSegments("ACGCTAC");
 		String [] Y = lcs.createSegments("CTAC");		
-		lcs.lengthLCS(X, Y);		
+		lcs.lengthLCS(X, Y);
+		
+		lcs.printLCS(lcs.b, X, X.length -1, Y.length -1);
+		
 	}
 }
