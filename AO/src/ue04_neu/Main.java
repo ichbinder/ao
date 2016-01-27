@@ -1,14 +1,60 @@
 package ue04_neu;
 
 import java.util.Random;
+import java.util.TreeMap;
+
 import Ue4_sortieren.*;
 
 
 public class Main {
-
+	
+	static TreeMap<Integer, Long> insertionTimes; 
 	
 	public static void main(String[] args) {
 
+//		CompareAlgorithmsFromThiel();
+		CompareAlgorithms(20, 500, 100);
+	}
+
+	public static void TestInsertionSort(int min, int max, int times){
+		
+		insertionTimes = new TreeMap<Integer, Long>();	
+		Random randomizer = new Random();		
+		int [] list;
+		
+		for(int i = min; i < max; i++){			
+
+			long middle = 0;
+			for(int j = 0; j < times; j++){
+			
+				list = randomList(i);
+				long currentTime = System.nanoTime();
+				InsertionSort.insertionSort(list);
+				long finishTime = System.nanoTime();				
+				middle += finishTime - currentTime;
+			}
+			insertionTimes.put(i, middle / times );
+		}
+	}
+	
+	public static void CompareAlgorithms(int min, int max, int times){
+
+		TestInsertionSort(min, max, times);
+		printLists(min, max);
+		
+	}
+	
+	public static void printLists(int min, int max){
+		
+		for(int i = min; i < max; i++){
+			
+			System.out.println(i + ":" + insertionTimes.get(i));
+		}		
+	}
+	
+	
+	public static void CompareAlgorithmsFromThiel(){
+		
 		System.out.println("----------------------");		
 		System.out.println("Vergleich InsertionSort:");		
 		CompareInsertionSort();
