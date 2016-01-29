@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.TreeMap;
 
 import Ue4_sortieren.*;
+import ue4.Compare;
 
 
 public class Main {
@@ -17,14 +18,11 @@ public class Main {
 	static TreeMap<Integer, Double> mergeTimes; 
 	static TreeMap<Integer, Double> quickTimes; 
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
-//		CompareAlgorithmsFromThiel();
-		CompareAlgorithms(1000, 20000, 10, false);
-//		CompareAlgorithmsThiel(1000, 20000, 10);
-		
+//		CompareAlgorithms(1000, 20000, 10, false);
+		Compare.optimizedValues();
 	}
-	
 	
 	public static void TestQuickSort(int min, int max, int times, boolean unsorted){
 		
@@ -75,8 +73,7 @@ public class Main {
 
 		for(int i = min; i < max; i++){			
 
-			if(!unsorted){
-				
+			if(!unsorted){				
 				list = sortedList(i, list);
 			}
 
@@ -91,7 +88,6 @@ public class Main {
 			}
 			mergeTimes.put(i, (middle / times) / 1000000.0 );
 			System.out.println(i);
-
 		}
 	}
 

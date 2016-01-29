@@ -30,34 +30,29 @@ public class Compare {
 	}
 	
 	
-	private static void optimizedValues() throws IOException{
+	public static void optimizedValues() throws IOException{
 		
-		OutputStream outputStream       = new FileOutputStream("sortComparisionOptim2.csv");
+		OutputStream outputStream       = new FileOutputStream("sortComparisionOptim.csv");
 		Writer       outputStreamWriter = new OutputStreamWriter(outputStream);
 		outputStreamWriter.write("n; MergeSort;InsertionSort;QuickSort\n");
-
 		
-		for(int i = 0; i < 100; i++){
+		for(int n = 1000; n < 20000; n++){
 			
-			double insert = Math.pow(i, 2) * 100000;// * 1000;
-			double merge_quick = i * Math.log10(i) * 100000;// * 1000;
-			String sLine = i + ";" + insert + ";" + merge_quick + ";" + merge_quick + "\n";
+			double insert = Math.pow(n, 2) / 1000000.0;// * 1000;
+			double merge_quick = n * Math.log10(n) / 1000000.0;// * 1000;
+			String sLine = n + ";" + insert + ";" + merge_quick + ";" + merge_quick + "\n";
 			while(sLine.contains(".")){
-				sLine = sLine.replace('.', ',');					
+				sLine = sLine.replace('.', ',');
 			}
-
-			outputStreamWriter.write(sLine);			
+			outputStreamWriter.write(sLine);
 		}
 		outputStreamWriter.close();
 		outputStream.close();
-		
 		System.out.println("FERTIG");
 	}
 	
 	// 1-300 mal den Vorgang wiederholen
-	// 100 * Messwerte mit der selben Reihe -> Mittelwert bilden
-	
-	
+	// 100 * Messwerte mit der selben Reihe -> Mittelwert bilden	
 	private static void tests() throws IOException{
 		
 		int counter = 10000;
