@@ -8,12 +8,17 @@ import java.io.Writer;
 import java.util.Random;
 import java.util.TreeMap;
 
-import Ue4_sortieren.*;
-import ue4.Compare;
+//import Ue4_sortieren.*;
+//import ue4.Compare;
 
 
 public class Main {
-	
+
+	public static long insertionCnt = 0;
+	public static long mergeCnt = 0;
+	public static long quickCnt = 0;
+
+
 	static TreeMap<Integer, Double> insertionTimes; 
 	static TreeMap<Integer, Double> mergeTimes; 
 	static TreeMap<Integer, Double> quickTimes; 
@@ -30,7 +35,7 @@ public class Main {
 		Random randomizer = new Random();		
 		int [] list = createSortedList(min);
 		
-		for(int i = min; i < max; i++){			
+		for(int i = min; i < max; i++){
 
 			long middle = 0;			
 			if(!unsorted){

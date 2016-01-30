@@ -34,12 +34,12 @@ public class Compare {
 		
 		OutputStream outputStream       = new FileOutputStream("sortComparisionOptim.csv");
 		Writer       outputStreamWriter = new OutputStreamWriter(outputStream);
-		outputStreamWriter.write("n; MergeSort;InsertionSort;QuickSort\n");
+		outputStreamWriter.write("n;InsertionSort;MergeSort;QuickSort\n");
 		
 		for(int n = 1000; n < 20000; n++){
 			
-			double insert = Math.pow(n, 2) / 1000000.0;// * 1000;
-			double merge_quick = n * Math.log10(n) / 1000000.0;// * 1000;
+			double insert = Math.pow(n, 2);// * 1000;
+			double merge_quick = n * Math.log10(n);// * 1000;
 			String sLine = n + ";" + insert + ";" + merge_quick + ";" + merge_quick + "\n";
 			while(sLine.contains(".")){
 				sLine = sLine.replace('.', ',');
