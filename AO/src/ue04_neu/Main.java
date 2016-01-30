@@ -25,7 +25,7 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 
-//		CompareAlgorithms(1000, 20000, 10, false);
+		CompareAlgorithms(1000, 20000, 10, true);
 		Compare.optimizedValues();
 	}
 	
